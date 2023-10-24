@@ -1,11 +1,28 @@
 ---
-title: "About this Website"
+title: "Academic and Professional Experience"
 output: 
   html_document:
     toc: true
     toc_float: true
 ---
 
-# About 
+### Educational History 
 
-This website is pretty great. 
+  * Undergraduate Education: University of California, Berkeley 
+    + Graduation Date: May 2022
+    + Degree: Bachelor's Degree in Chemistry
+      - Minor in Toxicology 
+  
+  
+  * Post-Graduate Education: Columbia University, Mailman School of Public Health 
+    + Graduation Date: expected May 2028 
+    + Degree: Doctor of Philosophy Degree in Environmental Health Sciences 
+    
+### Research Experience 
+
+  * Undergraduate Research Assistant in Bowles Agro-Ecology Lab, *University of California, Berkeley*
+  * Laboratory Operations Manager in Bowles Agro-Ecology Lab, *University of California, Berkeley*
+  * APHL-CDC Environmental Health Laboratory Fellow, *New Hampshire State Public Health Labs*  
+
+### Download Resume 
+ Please find a link to my resume here. 

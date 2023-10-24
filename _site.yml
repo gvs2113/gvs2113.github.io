@@ -3,7 +3,7 @@ output_dir: "."
 navbar:
   title: "Home"
   right:
-    - text: "About"
+    - text: "Educational and Professional Experience"
       href: about.html
     - icon: fa-envelope fa-lg
       href: mailto:<gvs2113@cumc.columbia.edu>
@@ -11,4 +11,4 @@ navbar:
       href: http://github.com/gvs2113/
 output:
   html_document:
-    theme: journal
+    theme: readable

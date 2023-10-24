@@ -6,7 +6,10 @@ output:
     toc_float: true
 ---
 
-# This is Grace's awesome website
+The purpose of this website is to provide a professional website about me and my achievements to complete a homework assignment for course: P8105 Data Science at Columbia University. 
+
+### About Me:
+
 
 
 
