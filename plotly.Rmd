@@ -1,56 +1,82 @@
 ---
-title: "Instacart Data Dashboard"
+title: "NYC Restaurant Inspection Data Plotly"
 output: html_document
 date: "2023-10-27"
 ---
 
-```{r setup, include=FALSE}
+Load the necessary packages and data. 
+```{r setup, message= FALSE}
 library(tidyverse)
-library(p8105.datasets)
-
 library(plotly)
+library(httr)
+library(jsonlite)
 
-knitr::opts_chunk$set(
-	echo = TRUE,
-	warning = FALSE,
-	fig.width = 8, 
-  fig.height = 6,
-  out.width = "90%"
-)
+get_all_inspections = function(url) {
+  
+  all_inspections = vector("list", length = 0)
+  
+  loop_index = 1
+  chunk_size = 50000
+  DO_NEXT = TRUE
+  
+  while (DO_NEXT) {
+    message("Getting data, page ", loop_index)
+    
+    all_inspections[[loop_index]] = 
+      GET(url,
+          query = list(`$order` = "zipcode",
+                       `$limit` = chunk_size,
+                       `$offset` = as.integer((loop_index - 1) * chunk_size)
+                       )
+          ) %>%
+      content("text") %>%
+      fromJSON() %>%
+      as_tibble()
+    
+    DO_NEXT = dim(all_inspections[[loop_index]])[1] == chunk_size
+    loop_index = loop_index + 1
+  }
+  
+  all_inspections
+  
+}
 
-theme_set(theme_minimal() + theme(legend.position = "bottom"))
+url = "https://data.cityofnewyork.us/resource/43nn-pn8j.json"
 
-options(
-  ggplot2.continuous.colour = "viridis",
-  ggplot2.continuous.fill = "viridis"
-)
-
-scale_colour_discrete = scale_colour_viridis_d
-scale_fill_discrete = scale_fill_viridis_d
+nyc_inspections = 
+  get_all_inspections(url) %>%
+  bind_rows()
 ```
 
 ```{r}
-data("instacart")
-
-instacart = 
-  instacart |> 
-  as_tibble()
-```
-
-Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. 
-```{r}
-instacart |> 
-  count(aisle) |> 
-  filter(n > 10000) |> 
-  mutate(aisle = fct_reorder(aisle, n)) |> 
-  plot_ly (x = ~aisle, y = ~n, color = ~aisle, type = "bar", colors = "viridis")
+nyc_inspections |>
+  drop_na() |> 
+  filter(boro == "Manhattan") |> 
+  mutate(
+    text_label = str_c("Grade: ", grade, "\nCritical Flag: ", critical_flag, "\nViolation: ", violation_description),
+    long = as.numeric(latitude),
+    lat = as.numeric(longitude)) |> 
+  plot_ly(
+    x = ~lat, y = ~long, type = "scatter", mode = "markers", color = ~grade, text = ~text_label, alpha = 0.5, colors = "viridis")
 ```
 
 
 ```{r}
-instacart |> 
-  group_by(department) |>  
-  summarize(n_aisle = n_distinct(aisle)) |> 
-  plot_ly (x = ~department, y = ~n_aisle, color = ~department, type = "box", colors = "viridis")
+nyc_inspections |> 
+  drop_na() |> 
+  mutate(
+    score = as.numeric(score),
+    boro = fct_reorder(boro, score))  |> 
+  plot_ly(x = ~boro, y = ~score, color = ~boro, type = "box", colors = "viridis")
+```
+
+```{r}
+nyc_inspections |> 
+  drop_na() |>
+  filter(boro == "Manhattan") |>
+  count(cuisine_description) |> 
+  mutate(cuisine_description = fct_reorder(cuisine_description, n)) |> 
+  filter(n > 30) |> 
+  plot_ly(x = ~cuisine_description, y= ~n, color = ~cuisine_description, type = "bar", colors = "viridis")
 ```
 
