@@ -1,5 +1,5 @@
 ---
-title: "plotly"
+title: "Instacart Data Dashboard"
 output: html_document
 date: "2023-10-27"
 ---
@@ -37,11 +37,20 @@ instacart =
   as_tibble()
 ```
 
+Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. 
 ```{r}
 instacart |> 
   count(aisle) |> 
   filter(n > 10000) |> 
   mutate(aisle = fct_reorder(aisle, n)) |> 
   plot_ly (x = ~aisle, y = ~n, color = ~aisle, type = "bar", colors = "viridis")
+```
+
+
+```{r}
+instacart |> 
+  group_by(department) |>  
+  summarize(n_aisle = n_distinct(aisle)) |> 
+  plot_ly (x = ~department, y = ~n_aisle, color = ~department, type = "box", colors = "viridis")
 ```
 
